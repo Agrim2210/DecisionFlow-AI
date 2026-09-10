@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments — never bake these into the image
+venv/
+.venv/
+env/
+ENV/
+myenv/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Celery artifacts
+celerybeat-schedule*
+celerybeat.pid
+*.log
+
+# Database files
+*.db
+*.sqlite
+
+# Git
+.git/
+.gitignore
+
+# CI/Dev tooling
+.github/
+.pre-commit-config.yaml
+
+# IDE
+.vscode/
+.idea/

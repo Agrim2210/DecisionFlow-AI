@@ -12,6 +12,14 @@ export default defineConfig({
     tanstackStart({
       // TanStack Start server entry point for SSR execution with Nitro
       server: { entry: "server" },
+      // Deploy to Cloudflare Pages via Workers (nitro cloudflare-module preset)
+      nitro: {
+        preset: "cloudflare-module",
+        cloudflare: {
+          nodeCompat: true,
+          deployConfig: true,
+        },
+      },
     }),
     react(),
     tailwindcss(),

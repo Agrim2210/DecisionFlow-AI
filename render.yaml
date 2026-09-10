@@ -1,0 +1,169 @@
+# render.yaml — DecisionFlow AI full-stack deployment
+# Docs: https://render.com/docs/blueprint-spec
+#
+# This blueprint provisions:
+#   - PostgreSQL database
+#   - Redis instance
+#   - FastAPI web service (auto-runs Alembic migrations on deploy)
+#   - Celery worker (pipeline, escalation, analytics, notifications)
+#   - Celery beat scheduler (escalation timers, analytics snapshots)
+
+databases:
+  - name: decisionflow-db
+    databaseName: decisionflow
+    plan: free          # upgrade to starter ($7/mo) for production
+    region: oregon
+
+services:
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  - type: redis
+    name: decisionflow-redis
+    plan: free          # upgrade to starter ($10/mo) for production
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+
+  # ── FastAPI Web Service ────────────────────────────────────────────────────
+  - type: web
+    name: decisionflow-api
+    runtime: docker
+    region: oregon
+    plan: free          # upgrade to starter ($7/mo) for production
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DATABASE_URL
+        fromDatabase:
+          name: decisionflow-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      # ── Secrets: set these manually in the Render dashboard ──
+      - key: SECRET_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: API_PUBLIC_URL
+        sync: false       # e.g. https://decisionflow-api.onrender.com
+      - key: ALLOWED_ORIGINS
+        sync: false       # e.g. https://decisionflow.pages.dev,https://yourdomain.com
+      - key: B2_ENDPOINT_URL
+        sync: false
+      - key: B2_KEY_ID
+        sync: false
+      - key: B2_APPLICATION_KEY
+        sync: false
+      - key: B2_BUCKET_NAME
+        sync: false
+
+  # ── Celery Worker ──────────────────────────────────────────────────────────
+  - type: worker
+    name: decisionflow-worker
+    runtime: docker
+    region: oregon
+    plan: free
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    dockerCommand: >
+      celery -A app.shared.workers.celery_app.celery_app worker
+      --loglevel=info
+      --concurrency=2
+      -Q pipeline,escalation,analytics,notifications,celery
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: decisionflow-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: SECRET_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+  # ── Celery Beat (Scheduler) ────────────────────────────────────────────────
+  - type: worker
+    name: decisionflow-beat
+    runtime: docker
+    region: oregon
+    plan: free
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    dockerCommand: >
+      celery -A app.shared.workers.celery_app.celery_app beat
+      --loglevel=info
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: decisionflow-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: decisionflow-redis
+          property: connectionString
+      - key: SECRET_KEY
+        sync: false

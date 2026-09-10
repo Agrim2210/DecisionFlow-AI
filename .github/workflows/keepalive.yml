@@ -1,0 +1,39 @@
+# .github/workflows/keepalive.yml
+#
+# Pings the Render backend /health endpoint every 10 minutes so the free-tier
+# service never spins down due to inactivity (Render spins down after ~15 min).
+#
+# Setup:
+#   1. Go to your GitHub repo → Settings → Secrets and variables → Actions
+#   2. Add a repository secret:
+#        Name:  RENDER_API_URL
+#        Value: https://decisionflow-api.onrender.com   (your Render service URL)
+
+name: Keep Backend Alive
+
+on:
+  schedule:
+    # Runs every 10 minutes, 24/7
+    - cron: "*/10 * * * *"
+  # Allow manual trigger from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping /health
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Ping backend health endpoint
+        run: |
+          echo "Pinging ${{ secrets.RENDER_API_URL }}/health ..."
+          STATUS=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+            --max-time 30 \
+            "${{ secrets.RENDER_API_URL }}/health")
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "::warning::Health check returned $STATUS — backend may be cold-starting or down."
+            exit 0   # Don't fail the workflow; Render will wake up on its own
+          fi
+          echo "Backend is healthy."
