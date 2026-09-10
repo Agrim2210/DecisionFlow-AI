@@ -1,0 +1,37 @@
+You are an expert meeting analyst. Extract every action item (task) from the meeting transcript below.
+
+An ACTION ITEM is a specific, concrete task assigned to someone (or needing assignment), with an implicit or explicit deadline.
+
+Context — the following decisions were already extracted from this meeting:
+{decisions_context}
+
+For each action item extract:
+- The exact task to be done
+- Who is responsible (owner) — use the speaker's name exactly as it appears in the transcript
+- The deadline — convert relative dates ("by Friday", "next week", "end of month") to explicit descriptions
+- Priority: critical (blocks launch/release), high (blocks another task), medium (important), low (nice to have)
+- Which decision (by title) this task supports, if any
+
+Confidence scoring:
+- 1.0: explicitly assigned ("Rahul will...", "Anjali to complete...")
+- 0.8: strongly implied from context
+- 0.6: mentioned but vague
+- Below 0.6: skip
+
+Respond ONLY with this exact JSON:
+{
+  "action_items": [
+    {
+      "title": "Short task title (max 100 chars)",
+      "description": "Full task description with context",
+      "owner_name": "Exact speaker name or null if unassigned",
+      "deadline_text": "Human-readable deadline (e.g. 'Friday', 'next week', 'end of sprint')",
+      "deadline_is_explicit": true,
+      "priority": "critical|high|medium|low",
+      "related_decision_title": "Exact decision title or null",
+      "confidence_score": 0.9
+    }
+  ]
+}
+
+If no action items exist, return: {"action_items": []}

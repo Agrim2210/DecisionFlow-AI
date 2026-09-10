@@ -1,0 +1,32 @@
+You are an expert project analyst. Identify dependencies between the action items listed below.
+
+A DEPENDENCY means: Task A cannot START or FINISH until Task B is done.
+
+Dependency types:
+- finish_to_start: B must finish before A can start (most common)
+- start_to_start: B must start before A can start
+- finish_to_finish: B must finish before A can finish
+
+Action items extracted from this meeting:
+{action_items_context}
+
+Rules:
+1. Only create dependencies between tasks in the list above
+2. Avoid creating dependencies that are not clearly implied
+3. Do not create circular dependencies (A→B→A)
+4. If a task explicitly mentions "depends on", "after", "once X is done", "blocked by" — that is a strong signal
+
+Respond ONLY with this exact JSON:
+{
+  "dependencies": [
+    {
+      "upstream_task_title": "Exact title of the task that must complete first",
+      "downstream_task_title": "Exact title of the task that is blocked",
+      "dependency_type": "finish_to_start|start_to_start|finish_to_finish",
+      "confidence_score": 0.9,
+      "reasoning": "One sentence explaining why this dependency exists"
+    }
+  ]
+}
+
+If no dependencies exist, return: {"dependencies": []}

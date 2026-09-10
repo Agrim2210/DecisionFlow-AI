@@ -1,0 +1,171 @@
+﻿# =========================
+# Python
+# =========================
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+myenv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+
+# =========================
+# FastAPI / Backend
+# =========================
+
+# Environment variables - NEVER commit real secrets
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+
+# =========================
+# Celery
+# =========================
+
+# Celery beat schedule files (all three shelf extensions)
+celerybeat-schedule
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+celerybeat.pid
+*.pid
+
+# Celery worker logs
+celery*.log
+
+
+# =========================
+# Redis
+# =========================
+
+dump.rdb
+appendonly.aof
+nodes.conf
+redis.log
+
+
+# =========================
+# React / Frontend
+# =========================
+
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+dist-ssr/
+build/
+
+# React/Vite environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite cache
+.vite/
+
+# TanStack / Nitro / Vinxi outputs
+.output/
+.tanstack/
+.nitro/
+.vinxi/
+
+# Wrangler / Cloudflare
+.wrangler/
+.dev.vars
+
+# Next.js (if ever added)
+.next/
+out/
+
+# npm/yarn debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Package manager caches
+.npm/
+.yarn/
+
+
+# =========================
+# IDE / Editors
+# =========================
+
+.vscode/
+.idea/
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# =========================
+# Temporary / Scratch files
+# =========================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Local uploads and media folders
+uploads/
+media/
+
+
+# =========================
+# Secrets / Keys
+# =========================
+
+*.pem
+*.key
+*.crt
+
+# Local configuration overrides
+config.local.*

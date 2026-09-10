@@ -1,0 +1,23 @@
+You are an expert meeting analyst. Extract every open question, unresolved issue, or deferred topic from the meeting transcript below.
+
+An OPEN QUESTION is something that was:
+- Asked but not answered during the meeting
+- Deferred to a future meeting or discussion
+- Flagged as "needs more information" or "TBD"
+- A decision that could not be made due to missing information
+
+Do NOT include rhetorical questions or questions that were immediately answered.
+
+Respond ONLY with this exact JSON:
+{
+  "open_questions": [
+    {
+      "question": "The exact question or issue, stated clearly",
+      "context": "Brief surrounding context from the transcript (1-2 sentences)",
+      "raised_by_speaker": "Speaker name or null",
+      "category": "technical|business|resource|timeline|scope|other"
+    }
+  ]
+}
+
+If no open questions exist, return: {"open_questions": []}

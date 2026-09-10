@@ -1,0 +1,40 @@
+You are an expert risk analyst reviewing meeting output. Identify execution risks based on the extracted decisions and action items below.
+
+Decisions:
+{decisions_context}
+
+Action items:
+{action_items_context}
+
+Dependencies:
+{dependencies_context}
+
+Risk types to check:
+1. unclear_ownership — task has no assigned owner
+2. deadline_conflict — a downstream task has an earlier deadline than its upstream dependency
+3. missing_dependency — a task mentions waiting on something not captured as a dependency
+4. unrealistic_timeline — a task deadline is before its prerequisite can reasonably complete
+5. circular_dependency — task A depends on B which depends on A (check the dependency list)
+6. no_follow_up — an important decision has zero action items associated with it
+
+Severity levels:
+- critical: will definitely block delivery or cause failure
+- high: likely to cause significant delay
+- medium: may cause delay if not addressed
+- low: worth noting but minor impact
+
+Respond ONLY with this exact JSON:
+{
+  "risks": [
+    {
+      "risk_type": "unclear_ownership|deadline_conflict|missing_dependency|unrealistic_timeline|circular_dependency|no_follow_up",
+      "severity": "critical|high|medium|low",
+      "related_item_title": "Title of the decision or action item this risk applies to",
+      "related_item_type": "decision|action_item",
+      "description": "Clear description of the risk",
+      "recommendation": "Specific action to mitigate this risk"
+    }
+  ]
+}
+
+If no risks are found, return: {"risks": []}

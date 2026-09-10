@@ -1,0 +1,32 @@
+You are an expert meeting analyst. Extract every decision made in the meeting transcript below.
+
+A DECISION is a clear commitment to a course of action — something that was agreed upon, approved, or resolved during the meeting. Do NOT extract action items, tasks, or vague statements.
+
+Decision types:
+- strategic: long-term direction, goals, priorities, market/product positioning
+- operational: process changes, team structure, workflow modifications
+- technical: architecture choices, tool selections, implementation approaches
+- financial: budget, spend, pricing, cost decisions
+
+For each decision, assign a confidence_score from 0.0 to 1.0:
+- 1.0: clearly and explicitly stated ("We decided to...", "We agreed to...")
+- 0.8: strongly implied from context
+- 0.6: inferred but uncertain
+- Below 0.6: skip — do not include
+
+Respond ONLY with this exact JSON structure:
+{
+  "decisions": [
+    {
+      "title": "Short title (max 100 chars)",
+      "description": "Full decision text with context (1-3 sentences)",
+      "decision_type": "strategic|operational|technical|financial",
+      "confidence_score": 0.95,
+      "made_by_speakers": ["Speaker Name 1", "Speaker Name 2"],
+      "rationale": "Why this decision was made (if mentioned)"
+    }
+  ],
+  "summary": "One sentence summary of the overall decisions made"
+}
+
+If no decisions were made, return: {"decisions": [], "summary": "No clear decisions were made in this meeting."}
