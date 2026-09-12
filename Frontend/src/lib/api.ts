@@ -4,16 +4,27 @@ const viteEnv = (
   }
 ).env;
 
+const DEFAULT_PROD_API_URL = "https://decisionflow-api-gxmu.onrender.com/api/v1";
+
 export function getApiBaseUrl() {
   if (viteEnv?.VITE_API_BASE_URL) {
     return String(viteEnv.VITE_API_BASE_URL).replace(/\/$/, "");
   }
   if (typeof window === "undefined") {
-    // In SSR (Node.js/Nitro), fetch requires an absolute URL
-    return "http://127.0.0.1:8000/api/v1";
+    // In SSR (Cloudflare Workers / Nitro), connect to live Render API
+    return DEFAULT_PROD_API_URL;
   }
-  // In client browser, use relative path in dev (proxied by Vite) or fallback in prod
-  return viteEnv?.DEV ? "/api/v1" : "http://localhost:8000/api/v1";
+  // In client browser, check if running locally or in cloud
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  if (viteEnv?.DEV && isLocal) {
+    return "/api/v1";
+  }
+  if (isLocal) {
+    return "http://localhost:8000/api/v1";
+  }
+  return DEFAULT_PROD_API_URL;
 }
 
 const ACCESS_TOKEN_KEY = "decisionflow.access_token";

@@ -80,7 +80,14 @@ class Settings(BaseSettings):
     SLACK_WEBHOOK_URL: str = ""
 
                                                                    
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
+    ALLOWED_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:5173",
+        "https://decisionflowai.agrimrana2005.workers.dev",
+        "https://decisionflow-ai.pages.dev",
+    ]
+    CORS_ORIGIN_REGEX: str = r"^https://.*(workers\.dev|pages\.dev)$"
 
                                                                     
     RATE_LIMIT_UPLOAD_PER_MINUTE: int = 10
