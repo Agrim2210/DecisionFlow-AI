@@ -33,9 +33,11 @@ target_metadata = Base.metadata
           
 
 
+from app.shared.config import settings
+
+
 def run_migrations_offline() -> None:
-       
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.sync_database_url or config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -48,9 +50,12 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-       
+    configuration = config.get_section(config.config_ini_section, {})
+    if settings.sync_database_url:
+        configuration["sqlalchemy.url"] = settings.sync_database_url
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
