@@ -43,12 +43,11 @@ celery_app.conf.update(
         },
         "refresh-execution-rates": {
             "task": "app.shared.workers.analytics_tasks.refresh_execution_rates",
-            "schedule": 36,
+            "schedule": 300.0,       # every 5 minutes
         },
-        
         "retry-incomplete-pipelines": {
             "task": "app.shared.workers.pipeline_tasks.retry_incomplete_pipelines",
-            "schedule": 18,
+            "schedule": 120.0,       # every 2 minutes
         },
     },
 )
