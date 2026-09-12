@@ -44,8 +44,39 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+const DEFAULT_BACKEND_ORIGIN = "https://decisionflow-api-gxmu.onrender.com";
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const url = new URL(request.url);
+
+    // Forward any API requests directly to the Render backend
+    if (url.pathname.startsWith("/api/")) {
+      const envObj = (env as Record<string, string> | undefined) ?? {};
+      const backendBase =
+        envObj.BACKEND_URL ||
+        envObj.VITE_API_BASE_URL?.replace(/\/api\/.*$/, "") ||
+        DEFAULT_BACKEND_ORIGIN;
+
+      const targetUrl = new URL(url.pathname + url.search, backendBase);
+      const proxyHeaders = new Headers(request.headers);
+      proxyHeaders.set("X-Forwarded-Host", url.host);
+      proxyHeaders.set("X-Forwarded-Proto", url.protocol.replace(":", ""));
+
+      const init: RequestInit & { duplex?: string } = {
+        method: request.method,
+        headers: proxyHeaders,
+        redirect: "follow",
+      };
+
+      if (request.method !== "GET" && request.method !== "HEAD" && request.body) {
+        init.body = request.body;
+        init.duplex = "half";
+      }
+
+      return await fetch(targetUrl.toString(), init);
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
