@@ -157,6 +157,10 @@ def create_app() -> FastAPI:
             "service": settings.APP_NAME,
             "version": settings.APP_VERSION,
             "env": settings.APP_ENV,
+            "smtp_configured": settings.smtp_configured,
+            "smtp_host": settings.SMTP_HOST or "(not set)",
+            "api_public_url": settings.API_PUBLIC_URL,
+            "frontend_url": settings.FRONTEND_URL,
         }
 
     @app.get("/", tags=["System"], include_in_schema=False)
