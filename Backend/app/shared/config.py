@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     SMTP_USE_SSL: bool = False
     SMTP_TIMEOUT_SECONDS: int = 30
     API_PUBLIC_URL: str = "http://localhost:8000"
+    FRONTEND_URL: str = "http://localhost:8080"
     EMAIL_VERIFICATION_TTL_MINUTES: int = 30
     INVITATION_TTL_HOURS: int = 72
     PASSWORD_RESET_TTL_MINUTES: int = 30

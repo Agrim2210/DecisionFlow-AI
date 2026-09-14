@@ -133,7 +133,7 @@ async def register(
 @router.get("/verify-email", response_class=HTMLResponse, summary="Verify a pending registration or workspace invitation")
 async def verify_email(token: str, db: DBSession) -> HTMLResponse:
     result = await _build_auth_service(db).verify_email(token)
-    login_url = "http://localhost:8080/login"
+    login_url = f"{settings.FRONTEND_URL.rstrip('/')}/login"
     if result.status == "already_verified":
         title = "Email already verified"
         message = (
@@ -201,7 +201,7 @@ async def forgot_password_request(
 
 @router.get("/forgot-password", response_class=HTMLResponse, summary="Show the password reset form for a valid email token")
 async def forgot_password_page(token: str, db: DBSession) -> HTMLResponse:
-    login_url = "http://localhost:8080/login"
+    login_url = f"{settings.FRONTEND_URL.rstrip('/')}/login"
     service = _build_auth_service(db)
     status = await service.validate_password_reset_token(token)
     if status != "valid":
@@ -220,7 +220,7 @@ async def forgot_password_confirm(
     new_password: Annotated[str, Form()],
     db: DBSession,
 ) -> HTMLResponse:
-    login_url = "http://localhost:8080/login"
+    login_url = f"{settings.FRONTEND_URL.rstrip('/')}/login"
     service = _build_auth_service(db)
     result = await service.reset_password(
         ResetPasswordCommand(raw_token=token, new_password=new_password)
@@ -242,7 +242,7 @@ async def forgot_password_confirm(
 
 @router.get("/forgot-password/success", response_class=HTMLResponse, summary="Show a success page after a password reset")
 async def forgot_password_success() -> HTMLResponse:
-    login_url = "http://localhost:8080/login"
+    login_url = f"{settings.FRONTEND_URL.rstrip('/')}/login"
     return HTMLResponse(
         f"""<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>DecisionFlow AI — Password Reset</title></head><body style='margin:0;background:#090d16;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;color:#f0f6fc'><main style='max-width:540px;margin:80px auto;background:#111827;border:1px solid rgba(255,255,255,0.1);padding:48px 36px;border-radius:20px;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5)'><div style='font-size:24px;letter-spacing:0.15em;font-weight:800;color:#38bdf8'>DECISIONFLOW <span style='color:#a5f3fc'>AI</span></div><h1 style='margin-top:32px;font-size:26px;font-weight:700'>Password reset complete</h1><div style='margin-top:16px;line-height:1.7;color:#94a3b8'>Your password has been updated successfully. You can now sign in with your new password.<br/><br/><a href='{login_url}' style='display:inline-block;margin-top:12px;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600'>Sign in to DecisionFlow AI</a></div></main></body></html>"""
     )

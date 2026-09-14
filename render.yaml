@@ -55,6 +55,8 @@ services:
         sync: false       # e.g. https://decisionflow-api.onrender.com
       - key: ALLOWED_ORIGINS
         sync: false       # e.g. https://decisionflow-ai.pages.dev,http://localhost:8080
+      - key: FRONTEND_URL
+        sync: false       # e.g. https://decisionflowai.agrimrana2005.workers.dev
       # Cloud object storage (optional)
       - key: B2_ENDPOINT_URL
         sync: false
