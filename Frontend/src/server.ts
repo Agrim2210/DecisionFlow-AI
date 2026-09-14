@@ -44,7 +44,7 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-const DEFAULT_BACKEND_ORIGIN = "https://decisionflow-api-gxmu.onrender.com";
+const DEFAULT_BACKEND_ORIGIN = "https://decisionflow-api-zess.onrender.com";
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {

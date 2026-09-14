@@ -4,27 +4,27 @@ const viteEnv = (
   }
 ).env;
 
-const DEFAULT_PROD_API_URL = "https://decisionflow-api-gxmu.onrender.com/api/v1";
+const DEFAULT_PROD_API_URL = "https://decisionflow-api-zess.onrender.com/api/v1";
 
 export function getApiBaseUrl() {
   if (viteEnv?.VITE_API_BASE_URL) {
     return String(viteEnv.VITE_API_BASE_URL).replace(/\/$/, "");
   }
   if (typeof window === "undefined") {
-    // In SSR (Cloudflare Workers / Nitro), connect to live Render API
+    // In SSR (Cloudflare Workers / Nitro), connect to live Render API directly
     return DEFAULT_PROD_API_URL;
   }
   // In client browser, check if running locally or in cloud
   const isLocal =
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1";
-  if (viteEnv?.DEV && isLocal) {
-    return "/api/v1";
-  }
   if (isLocal) {
-    return "http://localhost:8000/api/v1";
+    // Local dev — proxy via Vite dev-server or hit backend directly
+    return viteEnv?.DEV ? "/api/v1" : "http://localhost:8000/api/v1";
   }
-  return DEFAULT_PROD_API_URL;
+  // Production browser: use same-origin path so the Cloudflare Worker
+  // reverse-proxy forwards /api/* to Render — zero CORS issues.
+  return "/api/v1";
 }
 
 const ACCESS_TOKEN_KEY = "decisionflow.access_token";
